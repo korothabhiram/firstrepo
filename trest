@@ -1,0 +1,43 @@
+provider "aws" {
+    region = "us-east-1"
+    profile = "Abhiram"
+}
+
+variable "VPC" {
+    default = "vpc-2307a45e"
+  
+}
+
+resource "aws_security_group" "allow_ssh" {
+  name        = "allow_ssh"
+  description = "Allow ssh inbound traffic"
+  vpc_id      = "${var.VPC}"
+
+  ingress {
+    description = "ssh from VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "allow_ssh"
+  }
+}
+
+resource "aws_instance" "web" {
+  ami           = "ami-0885b1f6bd170450c"
+  instance_type = "t2.micro"
+  availability_zone = "us-east-1a"
+    tags = {
+    Name = "HelloWorld"
+  }
+}
